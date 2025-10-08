@@ -163,8 +163,8 @@
 
       <!-- Bên trái -->
       <div class="header-left">
-        <a href="#">Group C</a>
-        <a href="#">Home</a>
+        <a href="http://localhost:8080/">Group C</a>
+        <a href="http://localhost:8080/">Home</a>
 
         <form class="search-form" method="get" action="<?php echo esc_url(home_url('/')); ?>">
           <input type="text" class="search-field" placeholder="abc" name="s">
