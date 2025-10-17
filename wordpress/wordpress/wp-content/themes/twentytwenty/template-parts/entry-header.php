@@ -1,162 +1,139 @@
 <?php
-// Bắt đầu cấu trúc mới cho danh sách bài viết (trang chủ, danh mục, tìm kiếm,...)
 if (! is_singular()) :
 ?>
-<div class="container">
-	<article <?php post_class('custom-post-item'); ?> id="post-<?php the_ID(); ?>">
+    <div class="container">
+        <article <?php post_class('custom-post-item'); ?> id="post-<?php the_ID(); ?>">
+            <div class="custom-post-wrap">
+                <div class="custom-post-date">
+                    <div class="day-large">
+                        <?php the_time('d'); ?>
+                    </div>
+                    <div class="month-small">
+                        <?php echo 'THÁNG ' . get_the_time('m'); ?>
+                    </div>
+                </div>
 
-		<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" class="full-link-wrap" style="text-decoration: none; color: inherit;">
+                <div class="custom-post-divider"></div>
 
-			<div class="custom-post-wrap">
-				<div class="custom-post-date">
-					<div class="day-large">
-						<?php the_time('d'); ?>
-					</div>
-					<div class="month-small">
-						<?php
-						// Lấy Tháng bằng số và thêm chữ THÁNG (Tiếng Việt)
-						echo 'THÁNG ' . get_the_time('m');
-						?>
-					</div>
-				</div>
-
-				<div class="custom-post-divider"></div>
-
-				<div class="custom-post-content">
-					<h2 class="entry-title">
-						<?php the_title(); ?>
-					</h2>
-					<div class="entry-excerpt">
-						<?php the_excerpt(); ?>
-					</div>
-				</div>
-			</div>
-		</a>
-	</article>
-	</div>
-	<?php
-			else :
-				// Giữ nguyên code gốc Twenty Twenty cho trang đơn lẻ
-				?>
-
-	<article <?php post_class(); ?> id="post-<?php the_ID(); ?>">
-		<div class="post-inner <?php echo is_page_template('templates/template-full-width.php') ? '' : 'thin'; ?> ">
-			<div class="entry-title">
-				<?php
-				if (is_singular()) {
-					the_title('<h1 class="entry-title" style="text-align: center">', '</h1>');
-				}
-				?>
-			</div>
-			<div class="entry-content">
-				<?php 
-				the_content(__('Continue reading', 'twentytwenty')); ?>
-			</div>
-		</div>
-		<div class="section-inner">
-			<?php
-				wp_link_pages(array(/* ... */));
-				edit_post_link();
-				twentytwenty_the_post_meta(get_the_ID(), 'single-bottom');
-				if (post_type_supports(get_post_type(get_the_ID()), 'author') && is_single()) {
-					get_template_part('template-parts/entry-author-bio');
-				}
-			?>
-		</div>
-		<?php
-				if (is_single()) {
-					get_template_part('template-parts/navigation');
-				}
-				if ((is_single() || is_page()) && (comments_open() || get_comments_number()) && ! post_password_required()) {
-		?><div class="comments-wrapper section-inner"><?php comments_template(); ?></div><?php
-																						}
-																							?>
-	</article>
-
+                <div class="custom-post-content">
+                    <h2 class="entry-title">
+                        <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
+                            <?php the_title(); ?>
+                        </a>
+                    </h2>
+                    <div class="entry-excerpt">
+                        <?php 
+                        $excerpt = get_the_excerpt();
+                        echo wp_trim_words($excerpt, 30); 
+                        ?>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
 <?php
-			endif; // Kết thúc is_singular()
+endif;
 ?>
 
 <style>
-	/* Bố cục chính */
-.custom-post-wrap {
-  display: flex;
-  align-items: stretch;
-  border: 1px solid #ddd;
-  margin-bottom: 20px;
-  background: #fff;
-  text-decoration: none;
-  padding: 15px 20px;
-}
+    /* Bố cục chính */
+    .custom-post-wrap {
+        display: flex;
+        align-items: stretch;
+        border: 1px solid #ddd;
+        margin-bottom: 20px;
+        background: #fff;
+        text-decoration: none;
+        padding: 15px 20px;
+    }
 
-/* Ô ngày-tháng */
-.custom-post-date {
-  width: 80px;
-  text-align: center;
-  font-family: Arial, sans-serif;
-  padding-right: 10px;
-}
+    /* Ô ngày-tháng */
+    .custom-post-date {
+        width: 80px;
+        text-align: center;
+        font-family: Arial, sans-serif;
+        padding-right: 10px;
+    }
 
-.custom-post-date .day-large {
-  font-size: 36px;
-  font-weight: bold;
-  color: #222;
-  line-height: 1;
-}
+    .custom-post-date .day-large {
+        font-size: 36px;
+        font-weight: bold;
+        color: #222;
+        line-height: 1;
+    }
 
-.custom-post-date .month-small {
-  font-size: 12px;
-  color: #666;
-  margin-top: 5px;
-  text-transform: uppercase;
-}
+    .custom-post-date .month-small {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+        text-transform: uppercase;
+    }
 
-/* Vạch chia dọc */
-.custom-post-divider {
-  width: 1px;
-  background: #ccc;
-  margin: 0 15px;
-}
+    /* Vạch chia dọc */
+    .custom-post-divider {
+        width: 1px;
+        background: #ccc;
+        margin: 0 15px;
+    }
 
-/* Nội dung bên phải */
-.custom-post-content {
-  flex: 1;
-}
+    /* Nội dung bên phải */
+    .custom-post-content {
+        flex: 1;
+    }
 
-.custom-post-content .entry-title {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 0 0 6px;
-  color: #1e5799; /* xanh đậm */
-  text-transform: uppercase;
-}
+    .custom-post-content .entry-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin: 0 0 6px;
+        color: #1e5799;
+        /* xanh đậm */
+        text-transform: uppercase;
+    }
 
-.custom-post-content .entry-excerpt {
-  font-size: 13px;
-  color: #444;
-  line-height: 1.5;
-}
+    .custom-post-content .entry-excerpt {
+        font-size: 13px;
+        color: #444;
+        line-height: 1.5;
+    }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .custom-post-wrap {
-    flex-direction: column;
-    padding: 15px;
-  }
+    .entry-title a {
+        text-decoration: none;
+        color: #1e5799;
+        display: block;
+    }
 
-  .custom-post-date {
-    text-align: left;
-    margin-bottom: 10px;
-    width: auto;
-  }
+    .entry-title a:hover {
+        color: #2980b9;
+    }
 
-  .custom-post-divider {
-    display: none;
-  }
+    .custom-post-wrap {
+        cursor: pointer;
+    }
 
-  .custom-post-content .entry-title {
-    font-size: 15px;
-  }
-}
+    .custom-post-wrap:hover {
+        background: #f9f9f9;
+    }
 
+    /* Responsive */
+    @media (max-width: 768px) {
+        .custom-post-wrap {
+            flex-direction: column;
+            padding: 15px;
+        }
+
+        .custom-post-date {
+            text-align: left;
+            margin-bottom: 10px;
+            width: auto;
+        }
+
+        .custom-post-divider {
+            display: none;
+        }
+
+        .custom-post-content .entry-title {
+            font-size: 15px;
+        }
+    }
 </style>
+
