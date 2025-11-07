@@ -57,7 +57,7 @@ endif;
         border-radius: 4px;
     }
 
-    /* Điều chỉnh lại bố cục */
+    /* Bố cục chính */
     .custom-post-wrap {
         display: flex;
         align-items: center;

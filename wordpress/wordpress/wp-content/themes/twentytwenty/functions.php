@@ -816,103 +816,103 @@ function twentytwenty_get_elements_array() {
 	 * @param array Array of elements.
 	 */
 	return apply_filters( 'twentytwenty_get_elements_array', $elements );
-}
-
-/**
- * Custom comment template.
- *
- * @param WP_Comment $comment Comment object.
- * @param array      $args    An array of arguments.
- * @param int        $depth   Depth of the comment.
- */
-function custom_comment_template($comment, $args, $depth) {
-    ?>
-    <li id="comment-<?php comment_ID(); ?>" <?php comment_class(); ?>>
-        <article class="comment-body">
-            <div class="comment-meta">
-                <div class="comment-author">
-                    <?php echo get_avatar($comment, 60); ?>
-                    <?php printf('<cite class="fn">%s</cite>', get_comment_author_link()); ?>
-                </div>
-                
-                <div class="comment-metadata">
-                    <time datetime="<?php comment_time('c'); ?>">
-                        <?php
-                            printf(
-                                _x('%1$s at %2$s', '1: date, 2: time'),
-                                get_comment_date(),
-                                get_comment_time()
-                            );
-                        ?>
-                    </time>
-                </div>
-            </div>
-
-            <div class="comment-content">
-                <?php comment_text(); ?>
-                
-                <!-- Thêm phần hiển thị hình ảnh bình luận -->
-                <?php
-                $comment_image = get_comment_meta($comment->comment_ID, 'comment_image', true);
-                if ($comment_image) {
-                    echo '<div class="comment-image">';
-                    echo '<img src="' . esc_url($comment_image) . '" alt="Comment image">';
-                    echo '</div>';
-                }
-                ?>
-            </div>
-
-            <div class="reply">
-                <?php
-                comment_reply_link(
-                    array_merge(
-                        $args,
-                        array(
-                            'depth'     => $depth,
-                            'max_depth' => $args['max_depth'],
-                        )
-                    )
-                );
-                ?>
-            </div>
-        </article>
-    </li>
-    <?php
-}
-
-/**
- * Add custom comment form fields.
- *
- * @param array $fields Existing comment form fields.
- * @return array Modified comment form fields.
- */
-function custom_comment_form_fields($fields) {
-    $fields['comment_image'] = '<p class="comment-form-image">
-        <label for="comment_image">Thêm hình ảnh</label><br/>
-        <input type="file" name="comment_image" id="comment_image" accept="image/*">
-    </p>';
-    return $fields;
-}
-add_filter('comment_form_fields', 'custom_comment_form_fields');
-
-/**
- * Handle comment image upload and save the image URL as comment meta.
- *
- * @param int $comment_id The ID of the comment being posted.
- * @return void
- */
-function save_comment_image($comment_id) {
-    if (isset($_FILES['comment_image']) && $_FILES['comment_image']['error'] == 0) {
-        require_once(ABSPATH . 'wp-admin/includes/image.php');
-        require_once(ABSPATH . 'wp-admin/includes/file.php');
-        require_once(ABSPATH . 'wp-admin/includes/media.php');
-        
-        $attachment_id = media_handle_upload('comment_image', 0);
-        
-        if (!is_wp_error($attachment_id)) {
-            $image_url = wp_get_attachment_url($attachment_id);
-            update_comment_meta($comment_id, 'comment_image', $image_url);
-        }
-    }
-}
-add_action('comment_post', 'save_comment_image');
+	}
+	
+	/**
+	 * Custom comment template.
+	 *
+	 * @param WP_Comment $comment Comment object.
+	 * @param array      $args    An array of arguments.
+	 * @param int        $depth   Depth of the comment.
+	 */
+	function custom_comment_template($comment, $args, $depth) {
+	    ?>
+	    <li id="comment-<?php comment_ID(); ?>" <?php comment_class(); ?>>
+	        <article class="comment-body">
+	            <div class="comment-meta">
+	                <div class="comment-author">
+	                    <?php echo get_avatar($comment, 60); ?>
+	                    <?php printf('<cite class="fn">%s</cite>', get_comment_author_link()); ?>
+	                </div>
+	                
+	                <div class="comment-metadata">
+	                    <time datetime="<?php comment_time('c'); ?>">
+	                        <?php
+	                            printf(
+	                                _x('%1$s at %2$s', '1: date, 2: time'),
+	                                get_comment_date(),
+	                                get_comment_time()
+	                            );
+	                        ?>
+	                    </time>
+	                </div>
+	            </div>
+	
+	            <div class="comment-content">
+	                <?php comment_text(); ?>
+	                
+	                <!-- Thêm phần hiển thị hình ảnh bình luận -->
+	                <?php
+	                $comment_image = get_comment_meta($comment->comment_ID, 'comment_image', true);
+	                if ($comment_image) {
+	                    echo '<div class="comment-image">';
+	                    echo '<img src="' . esc_url($comment_image) . '" alt="Comment image">';
+	                    echo '</div>';
+	                }
+	                ?>
+	            </div>
+	
+	            <div class="reply">
+	                <?php
+	                comment_reply_link(
+	                    array_merge(
+	                        $args,
+	                        array(
+	                            'depth'     => $depth,
+	                            'max_depth' => $args['max_depth'],
+	                        )
+	                    )
+	                );
+	                ?>
+	            </div>
+	        </article>
+	    </li>
+	    <?php
+	}
+	
+	/**
+	 * Add custom comment form fields.
+	 *
+	 * @param array $fields Existing comment form fields.
+	 * @return array Modified comment form fields.
+	 */
+	function custom_comment_form_fields($fields) {
+	    $fields['comment_image'] = '<p class="comment-form-image">
+	        <label for="comment_image">Thêm hình ảnh</label><br/>
+	        <input type="file" name="comment_image" id="comment_image" accept="image/*">
+	    </p>';
+	    return $fields;
+	}
+	add_filter('comment_form_fields', 'custom_comment_form_fields');
+	
+	/**
+	 * Handle comment image upload and save the image URL as comment meta.
+	 *
+	 * @param int $comment_id The ID of the comment being posted.
+	 * @return void
+	 */
+	function save_comment_image($comment_id) {
+	    if (isset($_FILES['comment_image']) && $_FILES['comment_image']['error'] == 0) {
+	        require_once(ABSPATH . 'wp-admin/includes/image.php');
+	        require_once(ABSPATH . 'wp-admin/includes/file.php');
+	        require_once(ABSPATH . 'wp-admin/includes/media.php');
+	        
+	        $attachment_id = media_handle_upload('comment_image', 0);
+	        
+	        if (!is_wp_error($attachment_id)) {
+	            $image_url = wp_get_attachment_url($attachment_id);
+	            update_comment_meta($comment_id, 'comment_image', $image_url);
+	        }
+	    }
+	}
+	add_action('comment_post', 'save_comment_image');

@@ -20,13 +20,15 @@ if ( post_password_required() ) {
 if ( $comments ) {
 	?>
 
-	<div id="comments" class="comments-area">
+	<div class="comments" id="comments">
 
 		<?php
 		$comments_number = get_comments_number();
 		?>
 
-		<h2 class="comments-title">
+		<div class="comments-header section-inner small max-percentage">
+
+			<h2 class="comment-reply-title">
 			<?php
 			if ( ! have_comments() ) {
 				_e( 'Leave a comment', 'twentytwenty' );
@@ -49,9 +51,12 @@ if ( $comments ) {
 			}
 
 			?>
-		</h2>
+			</h2><!-- .comments-title -->
 
-		<ol class="comment-list">
+		</div><!-- .comments-header -->
+
+		<div class="comments-inner section-inner thin max-percentage">
+
 			<?php
 			wp_list_comments(
 				array(
@@ -88,7 +93,7 @@ if ( $comments ) {
 			}
 			?>
 
-		</ol>
+		</div><!-- .comments-inner -->
 
 	</div><!-- comments -->
 
