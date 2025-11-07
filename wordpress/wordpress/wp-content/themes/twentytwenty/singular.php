@@ -149,6 +149,18 @@ get_header();
             .single-post-body a:hover {
                 text-decoration: underline;
             }
+
+            #single-post-sidebar-left {
+                position: -webkit-sticky;
+                /* For Safari */
+                position: sticky;
+                top: 100px;
+                /* Adjust this value based on your header's height */
+                height: 100vh;
+                /* Optional: Makes the sidebar full height */
+                overflow-y: auto;
+                /* Optional: Adds scroll to the sidebar if content overflows */
+            }
         </style>
 
         <!--  Hiển thị bài viết liên quan -->
