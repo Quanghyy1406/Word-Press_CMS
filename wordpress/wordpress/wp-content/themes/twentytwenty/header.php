@@ -236,3 +236,58 @@
 		<?php
 		// Output the menu modal.
 		get_template_part( 'template-parts/modal-menu' );
+		?>
+		<style>
+			/* 1. Chỉnh layout tổng của header thành hàng ngang */
+.header-inner {
+    display: flex;
+    align-items: center; /* Căn giữa các mục theo chiều dọc */
+    justify-content: space-between; /* Đẩy 2 khối (trái/phải) ra 2 bên */
+    flex-wrap: nowrap; /* Ngăn không cho xuống hàng */
+    width: 100%;
+}
+
+/* 2. Chỉnh khối bên trái (logo + search) nằm ngang */
+.header-titles-wrapper {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+/* 3. Chỉnh khối bên phải (menu + icons) nằm ngang */
+.header-navigation-wrapper {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+/* 4. Chỉnh các icon (Menu, Search, Account) nằm ngang */
+.header-toggles {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+/* 5. Chỉnh các mục menu chính ("Du lịch", "món ăn"...) nằm ngang */
+.primary-menu-wrapper .primary-menu {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+/* 6. Sửa lỗi chữ "Home" bị vỡ thành "H o m e" */
+.title-edit .site-title {
+    white-space: nowrap; /* Ngăn chữ tự động xuống hàng */
+}
+
+/* 7. Thêm chút khoảng cách cho thanh search của bạn */
+.header-search-form {
+    margin: 0 15px; /* Tách thanh search ra khỏi logo và menu */
+}
+
+/* 8. Ẩn các nút menu/search cho di động (không cần trên desktop) */
+.header-titles-wrapper .mobile-search-toggle,
+.header-titles-wrapper .mobile-nav-toggle {
+    display: none;
+}
+		</style>
