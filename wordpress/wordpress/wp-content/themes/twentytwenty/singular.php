@@ -19,18 +19,22 @@ get_header();
 
     // if ( have_posts() ) {
 
-    //  while ( have_posts() ) {
-    //      the_post();
+    // 	while ( have_posts() ) {
+    // 		the_post();
 
-    //      get_template_part( 'template-parts/content', get_post_type() );
-    //  }
+    // 		get_template_part( 'template-parts/content', get_post_type() );
+    // 	}
     // }
 
     ?>
 
     <div class="container single-container py-5">
         <div class="row justify-content-center">
-            <div class="col-lg-10 col-md-11 col-sm-12">
+
+            <aside id="single-post-sidebar-left" class="widget-area col-lg-2 col-md-1 col-sm-2 me-4">
+                <?php dynamic_sidebar('single-post-left-sidebar'); ?>
+            </aside>
+            <div class="col-lg-8 col-md-10 col-sm-8">
 
                 <?php
                 if (have_posts()) :
@@ -58,6 +62,9 @@ get_header();
                 ?>
 
             </div>
+            <aside id="single-post-sidebar-right" class="widget-area col-lg-2 col-md-1 col-sm-2 me-4">
+                <?php dynamic_sidebar('single-post-right-sidebar'); ?>
+            </aside>
         </div>
 
 
@@ -146,6 +153,7 @@ get_header();
 
         <!--  Hiển thị bài viết liên quan -->
         <?php
+        get_template_part('template-parts/navigation');
         $categories = get_the_category($post->ID);
         if ($categories) {
             $category_ids = array_map(function ($cat) {
@@ -168,7 +176,7 @@ get_header();
                             <li class="related-item">
                                 <span class="related-date">
                                     <i class="fa-regular fa-calendar"></i>
-                                    <?php echo get_the_date('d \T\h\á\n\g m, Y'); ?>
+                                    <?php echo get_the_date('d F, Y'); ?>
                                 </span>
                                 <a href="<?php the_permalink(); ?>" class="related-link">
                                     <?php the_title(); ?>
@@ -183,15 +191,15 @@ get_header();
         }
         ?>
 
-       
+
         <?php
         // Hiển thị khung bình luận
         if (comments_open() || get_comments_number()) :
-            ?>
-    <div class="post-comments container my-5">
-        <?php comments_template(); ?>
-    </div>
-<?php
+        ?>
+            <div class="post-comments container my-5">
+                <?php comments_template(); ?>
+            </div>
+        <?php
         endif;
         ?>
 
@@ -225,10 +233,10 @@ get_header();
 
     .related-item {
         padding: 12px 0;
-        border-bottom: 1px solid #eee;  /* Thay đổi màu border */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         display: flex;
-        align-items: baseline;  /* Căn chỉnh các items */
-        gap: 20px;  /* Tăng khoảng cách giữa date và title */
+        align-items: center;
+        gap: 10px;
     }
 
     .related-item:last-child {
@@ -236,29 +244,22 @@ get_header();
     }
 
     .related-date {
-        font-size: 14px;
-        color: #666;
-        min-width: 130px;  /* Tăng lên để chứa đủ ngày tháng */
+        font-size: 13px;
+        white-space: nowrap;
+        min-width: 130px;
         display: inline-block;
     }
 
     .related-link {
-        color: #333;  /* Màu chữ đậm hơn */
-        font-size: 15px;
+        color: #222;
+        font-size: 16px;
         text-decoration: none;
-        transition: color 0.3s ease;
-        flex: 1;  /* Cho phép title chiếm hết không gian còn lại */
+        transition: all 0.3s ease;
     }
 
     .related-link:hover {
-        color: #0073aa;  /* Màu khi hover */
-        font-weight: normal;  /* Bỏ in đậm khi hover */
-    }
-
-    /* Thêm style cho icon calendar */
-    .fa-calendar {
-        margin-right: 5px;
-        color: #666;
+        font-weight: 700;
+        /* In đậm tiêu đề bài viết */
     }
 </style>
 
@@ -266,5 +267,3 @@ get_header();
 
 <?php
 get_footer();
-
-
