@@ -924,3 +924,135 @@ function add_fontawesome7_to_theme()
 	wp_enqueue_style('font-awesome-7', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css');
 }
 add_action('wp_enqueue_scripts', 'add_fontawesome7_to_theme');
+
+function custom_comment_item($comment, $args, $depth) {
+    ?>
+    <li <?php comment_class('comment'); ?> id="comment-<?php echo $comment->comment_ID; ?>">
+        <div class="comment-author mb-1"><?php echo get_comment_author(); ?></div>
+        <div class="comment-meta"><?php echo get_comment_date(); ?></div>
+        <div class="comment-text mb-2"><?php echo get_comment_text(); ?></div>
+
+        <button class="btn btn-reply" data-commentid="<?php echo $comment->comment_ID; ?>"> Reply
+        </button>
+
+        <?php if ($depth < 3) : ?>
+            <ul class="comment-reply list-unstyled">
+                <?php wp_list_comments(['callback' => 'custom_comment_item', 'style' => 'ul'], get_comments(['parent' => $comment->comment_ID])); ?>
+            </ul>
+        <?php endif; ?>
+    </li>
+    <?php
+}
+
+// =============================
+// Xử lý AJAX bình luận
+add_action('wp_ajax_custom_submit_comment', 'custom_submit_comment_callback');
+add_action('wp_ajax_nopriv_custom_submit_comment', 'custom_submit_comment_callback');
+
+function custom_submit_comment_callback() {
+    $commentdata = [
+        'comment_post_ID' => intval($_POST['comment_post_ID']),
+        'comment_content' => sanitize_text_field($_POST['comment']),
+        'comment_parent'  => intval($_POST['comment_parent']),
+        'user_id'         => get_current_user_id(),
+    ];
+
+    $comment_id = wp_new_comment($commentdata);
+    if ($comment_id) {
+        wp_send_json_success(['id' => $comment_id]);
+    } else {
+        wp_send_json_error();
+    }
+}
+
+function twentytwenty_child_widgets_init() {
+    register_sidebar( array(
+        'name'          => __( 'Sidebar Trái Bài Viết', 'twentytwenty-child' ),
+        'id'            => 'single-post-left-sidebar',
+        'description'   => __( 'Hiển thị ở bên trái trang chi tiết bài viết.', 'twentytwenty-child' ),
+        'before_widget' => '<section id="%1$s" class="widget %2$s">',
+        'after_widget'  => '</section>',
+        'before_title'  => '<h2 class="widget-title">',
+        'after_title'   => '</h2>',
+    ) );
+	register_sidebar( array(
+        'name'          => __( 'Sidebar Phải Bài Viết', 'twentytwenty-child' ),
+        'id'            => 'single-post-right-sidebar',
+        'description'   => __( 'Hiển thị ở bên phải trang chi tiết bài viết.', 'twentytwenty-child' ),
+        'before_widget' => '<section id="%1$s" class="widget %2$s">',
+        'after_widget'  => '</section>',
+        'before_title'  => '<h2 class="widget-title">',
+        'after_title'   => '</h2>',
+    ) );
+}
+add_action( 'widgets_init', 'twentytwenty_child_widgets_init' );
+
+/**
+ * Hàm tùy chỉnh để giới hạn độ dài đoạn trích (excerpt) theo ký tự
+ */
+function custom_excerpt_length_by_char($text)
+{
+    // Chỉ áp dụng giới hạn trên trang danh sách bài viết (không phải trang bài viết đơn)
+    if (!is_singular()) {
+        $max_chars = 100; // <- ĐẶT SỐ KÝ TỰ BẠN MUỐN Ở ĐÂY
+
+        // Loại bỏ HTML và ký tự đặc biệt
+        $text = strip_tags($text);
+
+        // Kiểm tra độ dài và cắt chuỗi (hỗ trợ Tiếng Việt tốt)
+        if (mb_strlen($text) > $max_chars) {
+            // Cắt chuỗi
+            $text = mb_substr($text, 0, $max_chars);
+            // Đảm bảo không bị cắt ngang từ cuối cùng, và thêm [...]
+            $text = mb_substr($text, 0, mb_strrpos($text, ' ')) . '<span class="dots-color">[...]</span>';
+        }
+    }
+    return $text;
+}
+
+// Áp dụng bộ lọc này để WordPress sử dụng hàm giới hạn của chúng ta
+add_filter('get_the_excerpt', 'custom_excerpt_length_by_char', 999);
+
+// Bổ sung: Nếu bạn muốn đoạn tóm tắt (excerpt) luôn được tạo (ngay cả khi không điền tay)
+// và bạn muốn đảm bảo dấu ... cuối cùng là [...]
+function custom_excerpt_more_dots($more)
+{
+    return '[...]';
+}
+
+add_filter('excerpt_more', 'custom_excerpt_more_dots');
+
+function custom_account_dropdown_script() {
+    ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Lấy nút toggle (link Account)
+            const accountToggle = document.querySelector('.account-toggle');
+            // Lấy container cha để bật/tắt class active
+            const accountDropdown = document.querySelector('.account-icon-dropdown');
+
+            if (accountToggle && accountDropdown) {
+                accountToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    accountDropdown.classList.toggle('active'); // Bật/tắt class 'active'
+                });
+
+                // Đóng menu khi người dùng nhấp ra ngoài
+                document.addEventListener('click', function(e) {
+                    // Kiểm tra xem click có ở bên ngoài dropdown và dropdown đang hiển thị không
+                    if (!accountDropdown.contains(e.target) && accountDropdown.classList.contains('active')) {
+                        accountDropdown.classList.remove('active');
+                    }
+                });
+            }
+        });
+    </script>
+    <?php
+}
+add_action( 'wp_footer', 'custom_account_dropdown_script' );
+
+//add thu vien icon
+function theme_enqueue_icons() {
+    wp_enqueue_style( 'font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css', array(), '6.5.0' );
+}
+add_action( 'wp_enqueue_scripts', 'theme_enqueue_icons' );

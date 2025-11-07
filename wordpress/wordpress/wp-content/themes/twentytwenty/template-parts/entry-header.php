@@ -1,170 +1,80 @@
 <?php
-if (! is_singular()) :
-?>
-    <div class="container">
-        <article <?php post_class('custom-post-item'); ?> id="post-<?php the_ID(); ?>">
-            <div class="custom-post-wrap">
-                <div class="custom-post-thumbnail">
-                    <?php if (has_post_thumbnail()) : ?>
-                        <a href="<?php the_permalink(); ?>">
-                            <?php the_post_thumbnail('medium'); ?>
-                        </a>
-                    <?php endif; ?>
-                </div>
+/**
+ * Displays the post header
+ *
+ * @package WordPress
+ * @subpackage Twenty_Twenty
+ * @since Twenty Twenty 1.0
+ */
 
-                <div class="custom-post-date">
-                    <div class="day-large">
-                        <?php the_time('d'); ?>
-                    </div>
-                    <div class="month-small">
-                        <?php echo 'THÁNG ' . get_the_time('m'); ?>
-                    </div>
-                </div>
+$entry_header_classes = '';
 
-                <div class="custom-post-divider"></div>
+if ( is_singular() ) {
+	$entry_header_classes .= ' header-footer-group';
+}
 
-                <div class="custom-post-content">
-                    <h2 class="entry-title">
-                        <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
-                            <?php the_title(); ?>
-                        </a>
-                    </h2>
-                    <div class="entry-excerpt">
-                        <?php 
-                        $excerpt = get_the_excerpt();
-                        echo wp_trim_words($excerpt, 30); 
-                        ?>
-                    </div>
-                </div>
-            </div>
-        </article>
-    </div>
-<?php
-endif;
 ?>
 
-<style>
-    /* Thêm style cho thumbnail */
-    .custom-post-thumbnail {
-        width: 200px;
-        margin-right: 20px;
-    }
-    
-    .custom-post-thumbnail img {
-        width: 100%;
-        height: 150px;
-        object-fit: cover;
-        border-radius: 4px;
-    }
+<header class="entry-header has-text-align-center<?php echo esc_attr( $entry_header_classes ); ?>">
 
-    /* Bố cục chính */
-    .custom-post-wrap {
-        display: flex;
-        align-items: center;
-        border: 1px solid #ddd;
-        margin-bottom: 20px;
-        background: #fff;
-        text-decoration: none;
-        padding: 15px 20px;
-    }
+	<div class="entry-header-inner section-inner medium">
 
-    /* Ô ngày-tháng */
-    .custom-post-date {
-        width: 80px;
-        text-align: center;
-        font-family: Arial, sans-serif;
-        padding-right: 10px;
-    }
+		<?php
+		/**
+		 * Allow child themes and plugins to filter the display of the categories in the entry header.
+		 *
+		 * @since Twenty Twenty 1.0
+		 *
+		 * @param bool Whether to show the categories in header. Default true.
+		 */
+		$show_categories = apply_filters( 'twentytwenty_show_categories_in_entry_header', true );
 
-    .custom-post-date .day-large {
-        font-size: 36px;
-        font-weight: bold;
-        color: #222;
-        line-height: 1;
-    }
+		if ( true === $show_categories && has_category() ) {
+			?>
 
-    .custom-post-date .month-small {
-        font-size: 12px;
-        color: #666;
-        margin-top: 5px;
-        text-transform: uppercase;
-    }
+			<div class="entry-categories">
+				<span class="screen-reader-text">
+					<?php
+					/* translators: Hidden accessibility text. */
+					_e( 'Categories', 'twentytwenty' );
+					?>
+				</span>
+				<div class="entry-categories-inner">
+					<?php the_category( ' ' ); ?>
+				</div><!-- .entry-categories-inner -->
+			</div><!-- .entry-categories -->
 
-    /* Vạch chia dọc */
-    .custom-post-divider {
-        width: 1px;
-        background: #ccc;
-        margin: 0 15px;
-    }
+			<?php
+		}
 
-    /* Nội dung bên phải */
-    .custom-post-content {
-        flex: 1;
-    }
+		if ( is_singular() ) {
+			the_title( '<h1 class="entry-title">', '</h1>' );
+		} else {
+			the_title( '<h2 class="entry-title heading-size-1"><a href="' . esc_url( get_permalink() ) . '">', '</a></h2>' );
+		}
 
-    .custom-post-content .entry-title {
-        font-size: 16px;
-        font-weight: bold;
-        margin: 0 0 6px;
-        color: #1e5799;
-        /* xanh đậm */
-        text-transform: uppercase;
-    }
+		$intro_text_width = '';
 
-    .custom-post-content .entry-excerpt {
-        font-size: 13px;
-        color: #444;
-        line-height: 1.5;
-    }
+		if ( is_singular() ) {
+			$intro_text_width = ' small';
+		} else {
+			$intro_text_width = ' thin';
+		}
 
-    .entry-title a {
-        text-decoration: none;
-        color: #1e5799;
-        display: block;
-    }
+		if ( has_excerpt() && is_singular() ) {
+			?>
 
-    .entry-title a:hover {
-        color: #2980b9;
-    }
+			<div class="intro-text section-inner max-percentage<?php echo $intro_text_width; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static output ?>">
+				<?php the_excerpt(); ?>
+			</div>
 
-    .custom-post-wrap {
-        cursor: pointer;
-    }
+			<?php
+		}
 
-    .custom-post-wrap:hover {
-        background: #f9f9f9;
-    }
+//		// Default to displaying the post meta.
+//		twentytwenty_the_post_meta( get_the_ID(), 'single-top' );
+		?>
 
-    /* Responsive */
-    @media (max-width: 768px) {
-        .custom-post-wrap {
-            flex-direction: column;
-            padding: 15px;
-        }
+	</div><!-- .entry-header-inner -->
 
-        .custom-post-date {
-            text-align: left;
-            margin-bottom: 10px;
-            width: auto;
-        }
-
-        .custom-post-divider {
-            display: none;
-        }
-
-        .custom-post-content .entry-title {
-            font-size: 15px;
-        }
-
-        .custom-post-thumbnail {
-            width: 100%;
-            margin-right: 0;
-            margin-bottom: 15px;
-        }
-        
-        .custom-post-thumbnail img {
-            height: 200px;
-        }
-    }
-</style>
-
+</header><!-- .entry-header -->
