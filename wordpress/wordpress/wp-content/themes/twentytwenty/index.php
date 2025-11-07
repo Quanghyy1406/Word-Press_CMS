@@ -7,7 +7,6 @@ get_header();
 ?>
 
 <main id="site-content">
-
     <?php
     $archive_title    = '';
     $archive_subtitle = '';
@@ -56,6 +55,15 @@ get_header();
                 <?php endif; ?>
             </div>
         </header>
+        <div class="no-search-results-form section-inner thin">
+            <?php
+            get_search_form(
+                array(
+                    'aria_label' => __( 'search again', 'twentytwenty' ),
+                )
+            );
+            ?>
+        </div>
     <?php endif; ?>
 
 
@@ -100,7 +108,41 @@ get_header();
                             ?>
                         </div>
                     </div>
-                <?php }} ?>
+
+                <?php }} else {?>
+                <div class="custom-col col-left">
+                    <h2 class="section-title">Trang mới nhất</h2>
+
+                    <?php
+                    $recent_posts = wp_get_recent_posts(array(
+                        'numberposts' => 3, // 👉 chỉ lấy 3 bài viết mới nhất
+                        'post_status' => 'publish'
+                    ));
+                    foreach ($recent_posts as $post) :
+                        $categories = get_the_category($post['ID']);
+                        $category_name = !empty($categories) ? $categories[0]->name : 'Chưa phân loại';
+                        ?>
+                        <div class="latest-post-item">
+                            <h3 class="latest-post-heading">
+                                <a href="<?php echo get_permalink($post['ID']); ?>">
+                                    <?php echo wp_trim_words($post['post_title'],8,'...'); ?>
+                                </a>
+                            </h3>
+                            <a href="<?php echo get_permalink($post['ID']); ?>" class="latest-post-thumbnail">
+                                <?php echo get_the_post_thumbnail($post['ID'], 'large'); ?>
+                            </a>
+                            <p class="latest-post-excerpt">
+                                <?php echo wp_trim_words($post['post_content'], 25, '...'); ?>
+                            </p>
+                            <div class="latest-post-category">
+                                Ngành: <?php echo esc_html($category_name); ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+
+            <?php }?>
         </div>
 
         <!-- Cột giữa -->
@@ -117,26 +159,20 @@ get_header();
                 get_template_part( 'template-parts/pagination' );
             elseif ( is_search() ) :
                 ?>
-                <div class="no-search-results-form section-inner thin">
-                    <?php
-                    get_search_form(
-                        array(
-                            'aria_label' => __( 'search again', 'twentytwenty' ),
-                        )
-                    );
-                    ?>
-                </div>
+
             <?php
+
             endif;
             ?>
         </div>
 
         <!-- Cột phải -->
+
         <?php if(!is_search()){ ?>
+
         <div class="custom-col col-right">
             <div class="comments" id="comments">
                 <div class="comments-inner section-inner thin max-percentage">
-
                     <div class="comments-box">
                         <h2 class="comments-box-title">Comments</h2>
                         <div class="comments-box-line"></div>
@@ -164,54 +200,82 @@ get_header();
 
                 </div>
             </div>
-            <?php } else {?><div class="custom-col col-right">
+            <?php } else { ?>
+                <div class="custom-col col-right">
+                    <div class="latest-comments-widget">
+                        <h3 class="section-title">Bình luận mới nhất</h3>
 
-                <div class="container">
-                    <div class="row">
-                        <div class="media comment-box">
-                            <div class="media-left">
-                                <a href="#">
-                                    <img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png">
-                                </a>
-                            </div>
-                            <div class="media-body">
-                                <h4 class="media-heading">John Doe</h4>
-                                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-                                <div class="media">
-                                    <div class="media-left">
-                                        <a href="#">
-                                            <img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png">
-                                        </a>
-                                    </div>
-                                    <div class="media-body">
-                                        <h4 class="media-heading">Jane Doe</h4>
-                                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-                                    </div>
-                                </div>
-                                <div class="media">
-                                    <div class="media-left">
-                                        <a href="#">
-                                            <img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png">
-                                        </a>
-                                    </div>
-                                    <div class="media-body">
-                                        <h4 class="media-heading">John Doe</h4>
-                                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <?php
+                        // Lấy 5 bình luận mới nhất đã được duyệt
+                        $recent_comments = get_comments(array(
+                            'number' => 5,
+                            'status' => 'approve',
+                            'hierarchical' => 'threaded',
+                            'parent' => 0, // chỉ lấy bình luận cha để hiển thị phân cấp
+                        ));
+
+                        if ($recent_comments) :
+                            ?>
+                            <ul class="styled-comment-list">
+                                <?php
+                                foreach ($recent_comments as $comment) :
+                                    $avatar = get_avatar($comment, 55);
+                                    $author = get_comment_author($comment);
+                                    $content = wp_trim_words($comment->comment_content, 35, '...');
+                                    ?>
+                                    <li class="styled-comment-item">
+                                        <div class="comment-avatar-wrap">
+                                            <?php echo $avatar; ?>
+                                        </div>
+                                        <div class="comment-body-wrap">
+                                            <h4 class="comment-author-name"><?php echo esc_html($author); ?></h4>
+                                            <p class="comment-text-content"><?php echo esc_html($content); ?></p>
+
+                                            <?php
+                                            // Lấy các bình luận con (reply)
+                                            $child_comments = get_comments(array(
+                                                'parent' => $comment->comment_ID,
+                                                'status' => 'approve',
+                                            ));
+
+                                            if ($child_comments) :
+                                                echo '<ul class="children">';
+                                                foreach ($child_comments as $child) :
+                                                    $child_avatar = get_avatar($child, 45);
+                                                    $child_author = get_comment_author($child);
+                                                    $child_content = wp_trim_words($child->comment_content, 30, '...');
+                                                    ?>
+                                                    <li class="styled-comment-item">
+                                                        <div class="comment-avatar-wrap">
+                                                            <?php echo $child_avatar; ?>
+                                                        </div>
+                                                        <div class="comment-body-wrap">
+                                                            <h4 class="comment-author-name"><?php echo esc_html($child_author); ?></h4>
+                                                            <p class="comment-text-content"><?php echo esc_html($child_content); ?></p>
+                                                        </div>
+                                                    </li>
+                                                <?php
+                                                endforeach;
+                                                echo '</ul>';
+                                            endif;
+                                            ?>
+                                        </div>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
                     </div>
                 </div>
-            </div>
-            <?php }?>
+            <?php } ?>
         </div>
 
     </div>
-    <!-- ✅ Kết thúc layout 3 cột -->
 
 </main>
+<?php
+get_template_part('template-parts/template-latest-news');
 
+?>
 <?php
 get_template_part( 'template-parts/footer-menus-widgets' );
 get_footer();
