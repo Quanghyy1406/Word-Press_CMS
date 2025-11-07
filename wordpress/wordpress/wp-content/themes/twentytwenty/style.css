@@ -1998,6 +1998,13 @@ button.sub-menu-toggle.active svg {
 }
 
 /* Custom Footer Styles */
+
+#single-post-sidebar-right.widget-area {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
 /* 1. Đổi màu nền cho toàn bộ footer */
 #footer {
     background-color: green !important;
@@ -2124,3 +2131,248 @@ section .section-title {
 		margin-bottom: 10px;
 	}
 }
+/*----------------------------------------categories----------------------------------------*/
+/* === BỐ CỤC BA CỘT (Cho màn hình lớn) === */
+
+.post-layout-wrapper-3-col {
+    display: flex;
+    gap: 20px; /* Khoảng cách giữa các cột */
+    align-items: flex-start; /* Căn chỉnh các cột lên đỉnh */
+}
+
+/* Định nghĩa chiều rộng cho 3 cột: Ví dụ 20% | 60% | 20% hoặc cố định */
+
+/* Cột 1: Categories (Cố định, nằm bên trái) */
+.post-col-1 {
+    flex-basis: 200px; /* Chiều rộng cố định cho Categories */
+    flex-shrink: 0;
+}
+
+/* Cột 2: Nội dung chính (Chiếm không gian lớn nhất, tự động co lại) */
+.post-col-2 {
+    flex-grow: 1; /* Cho phép cột này chiếm hết không gian còn lại */
+    min-width: 0; /* Cho phép nội dung bên trong co lại */
+}
+
+/* Cột 3: Bài tiếp theo (Cố định, nằm bên phải) */
+.post-col-3 {
+    flex-basis: 350px; /* Đã tăng chiều rộng cố định từ 250px lên 300px */
+    flex-shrink: 0;
+}
+
+/* Nếu bạn muốn cột Categories dính cố định khi cuộn */
+.post-col-1 .all-categories-list-container {
+    /* Đảm bảo khối này có style cho sticky (nếu cần) */
+    position: sticky;
+    top: 20px;
+    z-index: 10;
+}
+
+/* CSS cho Placeholder */
+.next-post-placeholder {
+    /* Đảm bảo placeholder có chiều cao để hiển thị */
+    padding: 20px;
+    border: 1px dashed #ccc;
+    border-radius: 4px;
+}
+
+
+/* === RESPONSIVE: CHUYỂN VỀ 1 CỘT TRÊN MOBILE VÀ TABLET === */
+@media (max-width: 1024px) {
+    .post-layout-wrapper-3-col {
+        flex-direction: column; /* Chuyển sang xếp chồng */
+    }
+
+    /* Đặt thứ tự cho Mobile: Categories -> Content -> Next Post */
+    .post-col-1 { order: 1; width: 100%; flex-basis: auto; }
+    .post-col-2 { order: 2; width: 100%; flex-basis: auto; }
+    .post-col-3 { order: 3; width: 100%; flex-basis: auto; }
+
+    /* Vô hiệu hóa tính năng cố định trên màn hình nhỏ */
+    .post-col-1 .all-categories-list-container {
+        position: static;
+        top: 0;
+    }
+}
+
+/* 1. CONTAINER CHUNG - Khối bao quanh */
+.all-categories-list-container {
+    /* Đảm bảo khối này không bị trôi nổi và chiếm đủ không gian */
+    width: fit-content;
+    clear: both;
+    margin: 20px 0; /* Khoảng cách trên dưới */
+    padding: 10px; /* Loại bỏ padding để tiêu đề chiếm hết chiều rộng */
+
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden; /* Cần thiết để tiêu đề có nền họa tiết */
+}
+
+/* 2. TIÊU ĐỀ "Categories" */
+.categories-list-header {
+    font-size: 2.5rem; /* Kích thước chữ lớn hơn */
+    font-weight: 700; /* Chữ đậm */
+    color: #333333;
+    padding: 15px 20px; /* Padding bên trong */
+    margin: 0; /* Loại bỏ margin mặc định của h2 */
+    border-bottom: 1px solid #e0e0e0; /* Đường kẻ dưới tiêu đề */
+}
+
+/* 3. DANH SÁCH UL */
+.categories-list-ul {
+    list-style: none; /* Loại bỏ bullet mặc định */
+    padding: 0 20px 10px 20px; /* Padding: trên 0, hai bên 20px, dưới 10px */
+    margin: 0; /* Loại bỏ margin mặc định */
+}
+
+/* 4. CÁC MỤC DANH MỤC LI */
+.categories-list-ul li {
+    padding: 10px 0; /* Padding trên dưới cho mỗi mục */
+    margin: 0;
+    border-bottom: 1px solid #eeeeee; /* Đường kẻ ngang phân cách */
+    position: relative;
+}
+
+/* Loại bỏ đường kẻ ngang cho mục cuối cùng */
+.categories-list-ul li:last-child {
+    border-bottom: none;
+}
+
+/* 5. TẠO DẤU CHẤM VÀNG (Custom Bullet Point) */
+.categories-list-ul li a {
+    /* Đảm bảo liên kết nằm đúng vị trí */
+    display: block;
+    padding-left: 15px; /* Tạo không gian cho dấu chấm */
+    text-decoration: none;
+    color: #007bff; /* Màu liên kết */
+    transition: color 0.2s;
+}
+
+.categories-list-ul li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    /* Dấu chấm */
+    width: 6px;
+    height: 6px;
+    background-color: #ffc107; /* Màu vàng */
+    border-radius: 50%;
+}
+
+.categories-list-ul li a:hover {
+    color: #0056b3; /* Đổi màu khi di chuột */
+}
+
+/*----------------------------------------end----------------------------------------*/
+
+/*----------------------------------------recent-post----------------------------------------*/
+/* CSS cho cột thứ 3: Latest News Block (Mẫu xanh ngọc) */
+.post-layout-wrapper-3-col {
+    display: flex;
+}
+
+.post-sidebar-next {
+    padding: 20px;
+}
+
+.latest-news-block {
+    background-color: #4dc4b9; /* Màu xanh ngọc (Teal) */
+    padding: 30px;
+    border-radius: 8px; /* Bo góc nhẹ */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: #fff; /* Chữ trắng */
+}
+
+/* Kiểu dáng cho từng bài viết */
+.news-item-link {
+    display: block;
+    text-decoration: none;
+    color: #fff;
+    padding: 15px 0;
+    transition: background-color 0.3s;
+}
+
+.news-item-link:last-of-type {
+    padding-bottom: 25px;
+}
+
+.news-item-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Bố cục của mỗi dòng bài viết (Ngày/Tháng | Tiêu đề) */
+.news-item-row {
+    display: flex;
+    align-items: flex-start; /* Căn chỉnh lên trên */
+}
+
+/* Nhóm ngày tháng */
+.date-group {
+    flex-shrink: 0;
+    width: 70px;
+    text-align: left;
+    margin-right: 15px;
+    font-weight: bold;
+}
+
+/* Khối Ngày/Tháng/Năm (toàn bộ) */
+.date-info {
+    display: flex;
+    /* Giữ align-items: flex-end để Ngày/Tháng và Năm căn chỉnh từ dưới lên */
+    /* THAY ĐỔI: Chuyển về center hoặc flex-start để dễ căn chỉnh theo tiêu đề */
+    align-items: flex-start;
+    line-height: 1;
+}
+
+/* Ngày và Tháng (khối 03 / 10) */
+/* [BỔ SUNG THEO YÊU CẦU NGƯỜI DÙNG] */
+.date-day {
+    /* Cần thêm độ dày và kiểu (solid) cho border-bottom để nó hiển thị */
+    border-bottom: 2px solid #ffffff;
+}
+/* Ngày và Tháng (03 và 10) */
+.date-day, .date-month {
+    font-size: 18px; /* Tăng cỡ chữ để nổi bật hơn */
+    display: block;
+    line-height: 1;
+    text-align: center;
+}
+
+/* Năm (25) */
+.date-year-display {
+    margin-left: 5px;
+    font-size: 18px;
+    transform: translateY(10px); /* Tinh chỉnh giá trị này */
+    align-self: flex-start; /* THAY ĐỔI: Căn từ trên xuống để dễ căn với đường kẻ ngang */
+}
+
+
+/* Tiêu đề bài viết */
+.post-title {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.4;
+    flex-grow: 1;
+}
+
+/* Nút Xem Tất Cả Tin Tức */
+.view-all-news-button {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background-color: #38a59c; /* Màu xanh đậm hơn cho nút */
+    color: #fff;
+    padding: 15px 10px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 4px;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.view-all-news-button:hover {
+    background-color: #2e8b83;
+}
+/*----------------------------------------end----------------------------------------*/
